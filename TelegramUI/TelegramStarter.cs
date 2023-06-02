@@ -25,8 +25,9 @@ class TelegramStarter
 
     public static void Start()
     {
+        TelegramConstant constant = new TelegramConstant();
         Console.OutputEncoding = Encoding.Unicode;
-        var client = new TelegramBotClient("6219192214:AAGhm6ytu0qtBDfyFuAHGnY8cfBqhstXTwM");
+        var client = new TelegramBotClient(constant.connectionString);
         client.StartReceiving(Update, Error);
         
         Console.ReadLine();
@@ -40,10 +41,9 @@ class TelegramStarter
 
         if (message?.Type == MessageType.Text && message.Text != null)
         {
-            //Console.WriteLine($"[{message.Chat.Username} ({message.Chat.FirstName}) - {message.Text}]");
+            Console.WriteLine($"[{message.Chat.Username} ({message.Chat.FirstName}) - {message.Text}]");
             if (message.Text!.ToLower().Contains("/start"))
             {
-                await botClient.SendTextMessageAsync(message.Chat.Id, "This bot is designed to help you find the perfect playlist or track for your current mood or weather.", cancellationToken:token);
                 await Authorization(botClient, message, token);
             }
             else if (message.Text!.ToLower().Contains("authentication"))
@@ -89,14 +89,6 @@ class TelegramStarter
                 await botClient.SendTextMessageAsync(message.Chat.Id, "Write the name of the track:",
                     cancellationToken: token);
                 return;
-            }
-            else if (message.Text!.ToLower().Contains("more info"))
-            {
-                await botClient.SendTextMessageAsync(message.Chat.Id, "What you can do with this bot:\n\n", cancellationToken:token);
-                await botClient.SendTextMessageAsync(message.Chat.Id, "1.Find music by weather: The bot will select a playlist based on the current weather conditions in your location.\n\n", cancellationToken:token);
-                await botClient.SendTextMessageAsync(message.Chat.Id, "2.Find a playlist or track by name: You can enter the name of the playlist or track you want to find.\n\n", cancellationToken:token);
-                await botClient.SendTextMessageAsync(message.Chat.Id, "3.Change location: The bot takes current weather conditions into account, so you can change your location to get recommendations based on the weather elsewhere.\n\n", cancellationToken:token);
-                await botClient.SendTextMessageAsync(message.Chat.Id, "The bot supports various music platforms including Spotify, YouTube and Deezer. You can choose your favorite music player and the bot will give you direct links to playlists or tracks.", cancellationToken:token);
             }
             else if (message.Text!.ToLower().Contains("back"))
             {
@@ -154,7 +146,6 @@ class TelegramStarter
             new KeyboardButton[] { "YouTube" },
             new KeyboardButton[] { "Deezer" },
             new KeyboardButton[] { "Change location" },
-            new KeyboardButton[] { "More info" },
         })
         {
             ResizeKeyboard = true
